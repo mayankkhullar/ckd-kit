@@ -1,0 +1,61 @@
+{
+  "version": "9.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "my-project": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/us-east-1",
+      "properties": {
+        "templateFile": "my-project.template.json"
+      },
+      "metadata": {
+        "/my-project/s3cdkbucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "s3cdkbucket96E183FF",
+            "trace": [
+              "new Bucket (/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/aws-s3/lib/bucket.js:521:26)",
+              "/tmp/tmpl5a4psut/lib/program.js:2720:58",
+              "Kernel._wrapSandboxCode (/tmp/tmpl5a4psut/lib/program.js:3148:24)",
+              "Kernel._create (/tmp/tmpl5a4psut/lib/program.js:2720:34)",
+              "Kernel.create (/tmp/tmpl5a4psut/lib/program.js:2461:29)",
+              "KernelHost.processRequest (/tmp/tmpl5a4psut/lib/program.js:9457:36)",
+              "KernelHost.run (/tmp/tmpl5a4psut/lib/program.js:9420:22)",
+              "Immediate._onImmediate (/tmp/tmpl5a4psut/lib/program.js:9421:46)",
+              "processImmediate (internal/timers.js:461:21)"
+            ]
+          }
+        ],
+        "/my-project/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata",
+            "trace": [
+              "new MetadataResource (/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/core/lib/private/metadata-resource.js:22:30)",
+              "/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/core/lib/private/synthesis.js:127:9",
+              "visit (/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/core/lib/private/synthesis.js:181:9)",
+              "visit (/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/core/lib/private/synthesis.js:178:9)",
+              "injectMetadataResources (/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/core/lib/private/synthesis.js:116:5)",
+              "Object.synthesize (/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/core/lib/private/synthesis.js:16:5)",
+              "App.synth (/tmp/jsii-kernel-hKnqfV/node_modules/@aws-cdk/core/lib/stage.js:100:41)",
+              "/tmp/tmpl5a4psut/lib/program.js:2536:134",
+              "Kernel._wrapSandboxCode (/tmp/tmpl5a4psut/lib/program.js:3148:24)",
+              "/tmp/tmpl5a4psut/lib/program.js:2536:107",
+              "Kernel._ensureSync (/tmp/tmpl5a4psut/lib/program.js:3129:28)",
+              "Kernel.invoke (/tmp/tmpl5a4psut/lib/program.js:2536:34)",
+              "KernelHost.processRequest (/tmp/tmpl5a4psut/lib/program.js:9457:36)",
+              "KernelHost.run (/tmp/tmpl5a4psut/lib/program.js:9420:22)",
+              "Immediate._onImmediate (/tmp/tmpl5a4psut/lib/program.js:9421:46)",
+              "processImmediate (internal/timers.js:461:21)"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

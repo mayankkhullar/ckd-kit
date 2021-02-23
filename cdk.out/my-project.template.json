@@ -1,0 +1,27 @@
+{
+  "Resources": {
+    "s3cdkbucket96E183FF": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "udemy-cdk-9440-6371-0048",
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "my-project/s3cdkbucket/Resource"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Modules": "aws-cdk=1.90.1,@aws-cdk/aws-events=1.90.1,@aws-cdk/aws-iam=1.90.1,@aws-cdk/aws-kms=1.90.1,@aws-cdk/aws-s3=1.90.1,@aws-cdk/cloud-assembly-schema=1.90.1,@aws-cdk/core=1.90.1,@aws-cdk/cx-api=1.90.1,@aws-cdk/region-info=1.90.1,jsii-runtime=Python/3.7.9"
+      },
+      "Metadata": {
+        "aws:cdk:path": "my-project/CDKMetadata/Default"
+      }
+    }
+  }
+}
