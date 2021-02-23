@@ -12,13 +12,6 @@ class App2Stack(core.Stack):
         #bucket = s3.Bucket(self, id='s3cdkbucket',bucket_name='config-212467762323',versioned=True)
         recorder = config.CfnConfigurationRecorder(self, id='recorder', role_arn='arn:aws:iam::212467762323:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig',recording_group=None)
         channel = config.CfnDeliveryChannel(self, id='channel', s3_bucket_name='config-212467762323')
-        #srule = config.CfnConfigRule(self, id='rule1', source=config.CfnConfigRule.SourceProperty(owner="AWS",source_identifier="REQUIRED_TAGS"),  
-        #        input_parameters={"tag1Key":"tagVal"})
-        #config_rule = config.CfnConfigRule(
-        #    self, "myRule",
-        #    source=config.CfnConfigRule.SourceProperty(
-        #        owner="AWS",
-        #        source_identifier="REQUIRED_TAGS"
-        #    ),
-        #)
-
+        srule = config.CfnConfigRule(self, id='rule1', source=config.CfnConfigRule.SourceProperty(owner="AWS",source_identifier="REQUIRED_TAGS"),
+                input_parameters={"tag1Key":"tagVal"})
+        srule2 = config.CfnConfigRule(self, id='rule2', source=config.CfnConfigRule.SourceProperty(owner="AWS",source_identifier="S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"))
