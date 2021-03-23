@@ -1,17 +1,71 @@
 from aws_cdk import core
 from aws_cdk import aws_config as config
 from aws_cdk import aws_s3 as s3
+from aws_cdk import aws_sns as _sns
+from aws_cdk import cloudformation_include as cfn_inc
+from aws_cdk import aws_iam as iam
+from aws_cdk import aws_events as _events
+import aws_cdk.aws_events_targets as targets
+from aws_cdk import aws_sns_subscriptions as subscriptions
 
+import time
 
 class App2Stack(core.Stack):
 
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
+        
+        #template = cfn_inc.CfnInclude(self, id='Template', template_file='template.yaml')
         # The code that defines your stack goes here
-        #bucket = s3.Bucket(self, id='s3cdkbucket',bucket_name='config-212467762323',versioned=True)
-        recorder = config.CfnConfigurationRecorder(self, id='recorder', role_arn='arn:aws:iam::212467762323:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig',recording_group=None)
-        channel = config.CfnDeliveryChannel(self, id='channel', s3_bucket_name='config-212467762323')
-        srule = config.CfnConfigRule(self, id='rule1', source=config.CfnConfigRule.SourceProperty(owner="AWS",source_identifier="REQUIRED_TAGS"),
+        bucket_names = 'config-1' + str(core.Aws.ACCOUNT_ID)
+        sns_topic = _sns.Topic(self, id='topic-config', topic_name='config-topic')
+        sns_topic.add_subscription(subscriptions.EmailSubscription("mayank.khullar@pwc.com"))
+        bucket = s3.Bucket(self, id='s3cdkbuckets',bucket_name=bucket_names,versioned=True)
+        bucket_arn2 = str(bucket.bucket_arn) + "/AWSLogs/" + str(core.Aws.ACCOUNT_ID) + "/Config/*"
+        bucket_policy = bucket.add_to_resource_policy(iam.PolicyStatement(effect=iam.Effect.ALLOW, 
+                                                                             resources=[bucket.bucket_arn],
+                                                                             actions=["s3:GetBucketAcl"],
+                                                                             sid = "AWSConfigBucketPermissionsCheck",
+                                                                             principals=[iam.ServicePrincipal("config.amazonaws.com")]
+                                                                             ))
+        bucket_policy2 = bucket.add_to_resource_policy(iam.PolicyStatement(effect=iam.Effect.ALLOW,
+                                                                           resources=[bucket_arn2],
+                                                                           actions=["s3:PutObject"],
+                                                                           sid = "AWSConfigBucketDelivery",
+                                                                           principals=[iam.ServicePrincipal("config.amazonaws.com")],
+                                                                           conditions={"StringEquals": {
+                                                                               "s3:x-amz-acl": "bucket-owner-full-control"}
+                                                                                        }))
+        recorder = config.CfnConfigurationRecorder(self,
+                id='recorder',
+                role_arn='arn:aws:iam::306646308112:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig',
+                recording_group=None)
+        channel = config.CfnDeliveryChannel(self,
+                id='channel',
+                s3_bucket_name=bucket.bucket_name,
+                sns_topic_arn=sns_topic.topic_arn)
+        time.sleep(20)
+        srule = config.CfnConfigRule(self,
+                id='rule1',
+                source=config.CfnConfigRule.SourceProperty(owner="AWS",
+                    source_identifier="REQUIRED_TAGS"),  
                 input_parameters={"tag1Key":"tagVal"})
-        srule2 = config.CfnConfigRule(self, id='rule2', source=config.CfnConfigRule.SourceProperty(owner="AWS",source_identifier="S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"))
+        srule2 = config.CfnConfigRule(self, id='rule2',
+                 source=config.CfnConfigRule.SourceProperty(owner="AWS",
+                    source_identifier="S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"))
+        srule3 = config.CfnConfigRule(self, id='rule3',
+                 source=config.CfnConfigRule.SourceProperty(owner="AWS",
+                    source_identifier="VPC_SG_OPEN_ONLY_TO_AUTHORIZED_PORTS"))
+        srule.add_depends_on(recorder)
+        srule2.add_depends_on(recorder)
+        srule3.add_depends_on(recorder)
+        event_rule = _events.Rule(self, id='event_rule', event_pattern = {
+           "source": ["aws.config"],
+           "detail": {
+               "messageType": ["ComplianceChangeNotification"],
+               "newEvaluationResult": {
+               "compliance_type": ["NON_COMPLIANT"]
+    }
+  }
+})
+        event_rule.add_target(targets.SnsTopic(sns_topic))
